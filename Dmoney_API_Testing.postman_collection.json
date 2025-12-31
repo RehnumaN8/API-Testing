@@ -1,0 +1,1043 @@
+{
+	"info": {
+		"_postman_id": "93df2a73-13ac-44f3-ac9f-f5caf97041a5",
+		"name": "Dmoney_API_Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50479910",
+		"_collection_link": "https://nshumonarehnuma-9872819.postman.co/workspace/Rehnuma-nshumona's-Workspace~51baed94-cb00-47a6-8042-23300e0c0a8b/collection/50479910-93df2a73-13ac-44f3-ac9f-f5caf97041a5?action=share&source=collection_link&creator=50479910"
+	},
+	"item": [
+		{
+			"name": "List and Search",
+			"item": [
+				{
+					"name": "Login with valid credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseCode = pm.response.code;\r",
+									" var jsonData =pm.response.json()\r",
+									"\r",
+									"switch (responseCode) {\r",
+									"    case 200:\r",
+									"    var jsonData =pm.response.json()\r",
+									"    pm.environment.set(\"token\",jsonData.token)\r",
+									"\r",
+									"    pm.test(\"HTTP status code Validation\",function(){\r",
+									"    pm.response.to.have.status(200)\r",
+									"    })\r",
+									"\r",
+									"    pm.test(\"Authentication Success Massage Validation\",function(){\r",
+									"    pm.expect(jsonData.message).to.assert('Login successful')\r",
+									"    })\r",
+									"\r",
+									"    pm.test(\" Verify the system displays the correct role Validation\",function(){\r",
+									"    pm.expect(jsonData.role).to.assert('Admin')\r",
+									"    })\r",
+									"\r",
+									"    pm.test(\"Token Expire Time  Validation\",function(){\r",
+									"    pm.expect(jsonData.expiresIn).to.assert('1h')\r",
+									"    })\r",
+									"\r",
+									"    break;\r",
+									"\r",
+									"    case 401:\r",
+									"      pm.test(\"For wrong attempt message assertion\", function(){\r",
+									"          pm.expect(jsonData.message).to.eql('Password incorrect')\r",
+									"      })\r",
+									"      break\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List of all users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search user by id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Search user by phone number",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/search/phonenumber/01208691876",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"search",
+								"phonenumber",
+								"01208691876"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search user by email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/user/search/email/Juwan8@gmail.com",
+							"path": [
+								"user",
+								"search",
+								"email",
+								"Juwan8@gmail.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search user by role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/search/Agent",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"search",
+								"Agent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Crud Operations",
+			"item": [
+				{
+					"name": "Create a new user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Full update user by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User fully updated\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var res = pm.response.json();\r",
+									"\r",
+									"pm.test(\"User created successfully\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// save id & phone for later use\r",
+									"pm.environment.set(\"userId\", res.id);\r",
+									"pm.environment.set(\"userPhone\", res.phone_number);\r",
+									"pm.environment.set(\"userEmail\", res.email);\r",
+									"\r",
+									"\r",
+									"var phoneNumber=\"0150\"+_.random(1000000,9999999)\r",
+									"pm.environment.set(\"validPhoneNumber\", phoneNumber)\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomFullName}}\",\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"password\": \"123455\",\r\n\"phone_number\": \"{{validPhoneNumber}}\",\r\n  \"nid\": \"123456788\",\r\n  \"role\": \"Customer\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/update/28616",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"28616"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Partial update user by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Jackson\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Jackson\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/update/28612",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"28612"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transaction Information",
+			"item": [
+				{
+					"name": "Get list of all transactions",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Search transaction by transaction ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/transaction/search/TXN509344",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"search",
+								"TXN509344"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get transaction statement by account",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/transaction/statement/01848830307",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"statement",
+								"01848830307"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user transaction limit by account",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/transaction/limit/01848830307",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"limit",
+								"01848830307"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user balance by account",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transaction Operations",
+			"item": [
+				{
+					"name": "Deposit money to an account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Deposit successful\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// transaction id save\r",
+									"pm.environment.set(\"depositTxnId\", res.transaction_id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"{{agentPhone}}\",\r\n  \"to_account\": \"{{customerPhone}}\",\r\n  \"amount\": 100\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/deposit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"deposit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw money from customer account via agent",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Withdraw successful\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"withdrawTxnId\", res.transaction_id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"{{82385234267}}\",\r\n  \"to_account\": \"{{SYSTEM}}\",\r\n  \"amount\": 50\r\n}\r\n\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/withdraw",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"withdraw"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send money between customer accounts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Send money successful\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"sendMoneyTxnId\", res.transaction_id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"{{01502839650}}\",\r\n  \"to_account\": \"{{01502803299}}\",\r\n  \"amount\": 30\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/sendmoney",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"sendmoney"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Merchant Process payment transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"01502839650\",\r\n  \"to_account\": \"01848830307\",\r\n  \"amount\": 30\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Balance Assertion",
+			"item": [
+				{
+					"name": "Balance BEFORE transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set(\"customerBalanceBefore\", res.balance);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"01502839650\",\r\n  \"to_account\": \"01848830307\",\r\n  \"amount\": 30\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/balance/01502839650",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"balance",
+								"01502839650"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transaction API",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Payment success\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"SYSTEM\",\r\n  \"to_account\": \"01505802289\",\r\n  \"amount\": 40\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Balance AFTER transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set(\"customerBalanceAfter\", res.balance);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"SYSTEM\",\r\n  \"to_account\": \"01505802289\",\r\n  \"amount\": 40\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/balance/SYSTEM",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"balance",
+								"SYSTEM"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Balance assertion for customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Customer balance decreased\", function () {\r",
+									"  pm.expect(\r",
+									"    Number(pm.environment.get(\"customerBalanceAfter\"))\r",
+									"  ).to.be.below(\r",
+									"    Number(pm.environment.get(\"customerBalanceBefore\"))\r",
+									"  );\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"SYSTEM\",\r\n  \"to_account\": \"01505802289\",\r\n  \"amount\": 40\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/balance/SYSTEM",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"balance",
+								"SYSTEM"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Merchant) Balance before transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"merchantBefore\", pm.response.json().balance);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"SYSTEM\",\r\n  \"to_account\": \"01505802289\",\r\n  \"amount\": 40\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/balance/01505802289",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"balance",
+								"01505802289"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Merchant) Balance after transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"merchantAfter\", pm.response.json().balance);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"SYSTEM\",\r\n  \"to_account\": \"01505802289\",\r\n  \"amount\": 40\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/balance/01505802289",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"balance",
+								"01505802289"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Balance assertion for merchant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Merchant balance increased\", function () {\r",
+									"  pm.expect(\r",
+									"    Number(pm.environment.get(\"merchantAfter\"))\r",
+									"  ).to.be.above(\r",
+									"    Number(pm.environment.get(\"merchantBefore\"))\r",
+									"  );\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "ROADTOSDET",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from_account\": \"SYSTEM\",\r\n  \"to_account\": \"01505802289\",\r\n  \"amount\": 40\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/transaction/balance/01505802289",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"balance",
+								"01505802289"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
